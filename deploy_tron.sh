@@ -18,43 +18,37 @@ while [ -n "$1" ]; do
   case "$1" in
   --net)
     NET=$2
-    shift 2
     ;;
   --app)
     APP=$2
-    shift 2
     ;;
   --db)
     DB=$2
-    shift 2
     ;;
   --work_space)
     WORK_SPACE=$2
-    shift 2
     ;;
   --commitid)
     COMMITID=$2
-    shift 2
     ;;
   --branch)
     BRANCH=$2
-    shift 2
     ;;
   --trust-node)
     TRUST_NODE=$2
-    shift 2
     ;;
   --rpc-port)
     RPC_PORT=$2
-    shift 2
     ;;
   --heap-size)
     HEAP_SIZE=$2
-    shift 2
+    ;;
+  --get-backup)
+    URL_BACKUP=$2
     ;;
   *) ;;
-
   esac
+  shift 2
 done
 
 if [ -z "$HEAP_SIZE" ]; then
@@ -117,6 +111,12 @@ elif [ "$DB" == "backup" ]; then
   tar -czf "$BIN_PATH/output-directory-$GIT_COMMIT-$NET.tar.gz" "$BIN_PATH/output-directory"
   rm -rf "$BIN_PATH/output-directory"
   echo "backup db success"
+fi
+
+if [ -n "$URL_BACKUP" ]; then
+  # rm -rf "$BIN_PATH/output-directory"
+  curl -LO "$URL_BACKUP"
+  tar -xf "$URL_BACKUP"
 fi
 
 ## build when release changed
