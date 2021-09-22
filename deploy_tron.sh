@@ -10,6 +10,11 @@ DB="keep"
 RPC_PORT='50051'
 TRUST_NODE="127.0.0.1:50051"
 
+## set PATH
+script_dir="$(cd "$(dirname "$0")" && pwd)"
+JAVA_HOME=$script_dir/../jdk
+PATH=$PATH:$JAVA_HOME/bin
+
 # compute default heap size
 # total=`cat /proc/meminfo  |grep MemTotal |awk -F ' ' '{print $2}'`
 # HEAP_SIZE=`echo "$total/1024/1024*0.8" | bc |awk -F. '{print $1"g"}'`
@@ -91,16 +96,18 @@ if [ -n "$RPC_PORT" ]; then
 fi
 # checkout branch or commitid
 if [ -n "$BRANCH" ]; then
-  cd "$BIN_PATH"/$PROJECT && git fetch && git checkout "$BRANCH"
-  git reset --hard origin/"$BRANCH"
+  (
+    cd "$BIN_PATH"/$PROJECT && git fetch && git checkout "$BRANCH"
+    git reset --hard origin/"$BRANCH"
+  )
 fi
 
 if [ -n "$COMMITID" ]; then
-  cd "$BIN_PATH"/$PROJECT && git fetch && git checkout "$COMMITID"
+  (cd "$BIN_PATH"/$PROJECT && git fetch && git checkout "$COMMITID")
 fi
 
 if [ -n "$RELEASE" ]; then
-  cd "$BIN_PATH"/$PROJECT && git fetch && git checkout tags/"$RELEASE" -b release
+  (cd "$BIN_PATH"/$PROJECT && git fetch && git checkout tags/"$RELEASE" -b release)
   BRANCH='release'
 fi
 
